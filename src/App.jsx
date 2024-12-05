@@ -3,7 +3,6 @@ import { FaTrash } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const App = () => {
-  // Stato per gestione articoli e form
   const [articles, setArticles] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -14,14 +13,22 @@ const App = () => {
   });
   const [idCounter, setIdCounter] = useState(1);
 
-  // Alert quando si pubblica un articolo
   useEffect(() => {
-    if (formData.published) {
-      alert("Stai per pubblicare un articolo");
-    }
-  }, [formData.published]);
+    fetch("http://localhost:3000/posts")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Dati API:", data);
+        setArticles(data);
+        if (data.length > 0) {
+          const maxId = Math.max(...data.map((article) => article.id));
+          setIdCounter(maxId + 1);
+        }
+      })
+      .catch((error) => {
+        console.error("Errore nel recupero degli articoli:", error);
+      });
+  }, []);
 
-  // Funzione gestione cambio dei valori del form
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -30,12 +37,18 @@ const App = () => {
     });
   };
 
-  // Funzione invio del form
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (formData.title && formData.content && formData.category) {
-      setArticles([...articles, { id: idCounter, ...formData }]);
+      const newArticle = {
+        id: idCounter,
+        title: formData.title,
+        image: formData.image,
+        content: formData.content,
+        category: formData.category,
+        published: formData.published,
+      };
+      setArticles([...articles, newArticle]);
       setFormData({
         title: "",
         image: "",
@@ -47,7 +60,6 @@ const App = () => {
     }
   };
 
-  // Funzione per eliminare un articolo
   const deleteArticle = (id) => {
     setArticles(articles.filter((article) => article.id !== id));
   };
@@ -56,80 +68,65 @@ const App = () => {
     <div className="container mt-5">
       <h1 className="text-center">Gestore per Articoli di Blog</h1>
       <form onSubmit={handleSubmit} className="mb-4">
-        <div className="form-group mt-4">
-          <label htmlFor="articleTitle">Titolo Articolo</label>
+        <div className="mb-3">
+          <label className="form-label">Titolo</label>
           <input
             type="text"
-            id="articleTitle"
-            name="title"
             className="form-control"
+            name="title"
             value={formData.title}
             onChange={handleChange}
-            placeholder="Inserisci titolo dell'articolo"
             required
           />
         </div>
-        <div className="form-group mt-4">
-          <label htmlFor="articleImage">URL Immagine</label>
+        <div className="mb-3">
+          <label className="form-label">Immagine (URL)</label>
           <input
             type="text"
-            id="articleImage"
-            name="image"
             className="form-control"
+            name="image"
             value={formData.image}
             onChange={handleChange}
-            placeholder="Inserisci URL immagine"
           />
         </div>
-        <div className="form-group mt-4">
-          <label htmlFor="articleContent">Contenuto Articolo</label>
+        <div className="mb-3">
+          <label className="form-label">Contenuto</label>
           <textarea
-            id="articleContent"
-            name="content"
             className="form-control"
+            name="content"
             value={formData.content}
             onChange={handleChange}
-            placeholder="Scrivi il contenuto dell'articolo"
-            rows="5"
             required
           ></textarea>
         </div>
-        <div className="form-group mt-4">
-          <label htmlFor="articleCategory">Categoria</label>
-          <select
-            id="articleCategory"
-            name="category"
+        <div className="mb-3">
+          <label className="form-label">Categoria</label>
+          <input
+            type="text"
             className="form-control"
+            name="category"
             value={formData.category}
             onChange={handleChange}
             required
-          >
-            <option value="" disabled>
-              Seleziona una categoria
-            </option>
-            <option value="Tecnologia">Tecnologia</option>
-            <option value="Scienza">Scienza</option>
-            <option value="Arte">Arte</option>
-            <option value="Sport">Sport</option>
-          </select>
-        </div>
-        <div className="form-check mt-4">
-          <input
-            type="checkbox"
-            id="articlePublished"
-            name="published"
-            className="form-check-input"
-            checked={formData.published}
-            onChange={handleChange}
           />
-          <label htmlFor="articlePublished" className="form-check-label">
-            Pubblica Articolo
-          </label>
         </div>
-        <button type="submit" className="btn btn-primary mt-4">
+        <div className="mb-3">
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              name="published"
+              checked={formData.published}
+              onChange={handleChange}
+            />
+            <label className="form-check-label">Pubblicato</label>
+          </div>
+        </div>
+        <button type="submit" className="btn btn-primary">
           Aggiungi Articolo
         </button>
       </form>
+
       {articles.length > 0 ? (
         <ul className="list-group">
           {articles.map((article) => (
