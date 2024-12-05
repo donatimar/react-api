@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const App = () => {
   const [articles, setArticles] = useState([]);
   const [formData, setFormData] = useState({
+    id: "",
     title: "",
     image: "",
     content: "",
@@ -18,7 +19,8 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log("Dati API:", data);
-        setArticles(data);
+        debugger;
+        setArticles(data.posts);
         if (data.length > 0) {
           const maxId = Math.max(...data.map((article) => article.id));
           setIdCounter(maxId + 1);
@@ -48,6 +50,7 @@ const App = () => {
         category: formData.category,
         published: formData.published,
       };
+      console.log(articles);
       setArticles([...articles, newArticle]);
       setFormData({
         title: "",
