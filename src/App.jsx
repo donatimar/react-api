@@ -19,7 +19,6 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log("Dati API:", data);
-        debugger;
         setArticles(data.posts);
         if (data.length > 0) {
           const maxId = Math.max(...data.map((article) => article.id));
@@ -71,7 +70,7 @@ const App = () => {
       <h1 className="text-center">Gestore per Articoli di Blog</h1>
       <form onSubmit={handleSubmit} className="mb-4">
         <div className="mb-3">
-          <label className="form-label">Titolo</label>
+          <label className="form-label font-weight-bold h5">Titolo</label>
           <input
             type="text"
             className="form-control"
@@ -82,7 +81,9 @@ const App = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Immagine (URL)</label>
+          <label className="form-label font-weight-bold h5">
+            Immagine (URL)
+          </label>
           <input
             type="text"
             className="form-control"
@@ -92,7 +93,7 @@ const App = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Contenuto</label>
+          <label className="form-label font-weight-bold h5">Contenuto</label>
           <textarea
             className="form-control"
             name="content"
@@ -102,7 +103,7 @@ const App = () => {
           ></textarea>
         </div>
         <div className="mb-3">
-          <label className="form-label">Categoria</label>
+          <label className="form-label font-weight-bold h5">Categoria</label>
           <input
             type="text"
             className="form-control"
