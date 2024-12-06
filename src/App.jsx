@@ -50,7 +50,6 @@ const App = () => {
         category: formData.category,
         published: formData.published,
       };
-      console.log(articles);
       setArticles([...articles, newArticle]);
       setFormData({
         title: "",
@@ -146,10 +145,17 @@ const App = () => {
                   <FaTrash />
                 </button>
               </div>
-              {article.image && (
+              {article.image ? (
                 <img
                   src={article.image}
                   alt={article.title}
+                  className="img-fluid mt-2"
+                  style={{ maxHeight: "200px" }}
+                />
+              ) : (
+                <img
+                  src="https://placehold.co/600x400"
+                  alt="Placeholder"
                   className="img-fluid mt-2"
                   style={{ maxHeight: "200px" }}
                 />
