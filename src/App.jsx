@@ -40,25 +40,25 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.title && formData.content && formData.category) {
-      const newArticle = {
-        id: idCounter,
-        title: formData.title,
-        image: formData.image,
-        content: formData.content,
-        category: formData.category,
-        published: formData.published,
-      };
-      setArticles([...articles, newArticle]);
-      setFormData({
-        title: "",
-        image: "",
-        content: "",
-        category: "",
-        published: false,
-      });
-      setIdCounter(idCounter + 1);
-    }
+
+    const newArticle = {
+      id: idCounter,
+      title: formData.title,
+      image: formData.image,
+      content: formData.content,
+      category: formData.category,
+      published: formData.published,
+    };
+
+    setArticles([...articles, newArticle]);
+    setFormData({
+      title: "",
+      image: "",
+      content: "",
+      category: "",
+      published: false,
+    });
+    setIdCounter(idCounter + 1);
   };
 
   const deleteArticle = (id) => {
