@@ -154,7 +154,7 @@ const App = () => {
                 />
               ) : (
                 <img
-                  src="https://placehold.co/600x400"
+                  src="https://placehold.co/200x100"
                   alt="Placeholder"
                   className="img-fluid mt-2"
                   style={{ maxHeight: "200px" }}
