@@ -157,7 +157,7 @@ const App = () => {
                   src={article.image}
                   alt={article.title}
                   className="img-fluid mt-2"
-                  style={{ maxHeight: "200px" }}
+                  style={{ maxHeight: "300px" }}
                 />
               ) : (
                 <img
