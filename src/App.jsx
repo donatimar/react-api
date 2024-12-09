@@ -73,7 +73,7 @@ const App = () => {
     })
       .then((response) => {
         if (response.ok) {
-          setArticles(articles.filter((_, idx) => idx !== index));
+          setArticles(articles.filter((_, index) => index !== index));
         } else {
           console.error("Errore durante l'eliminazione.");
         }
