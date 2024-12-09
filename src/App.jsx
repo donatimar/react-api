@@ -5,31 +5,27 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const App = () => {
   const [articles, setArticles] = useState([]);
   const [formData, setFormData] = useState({
-    id: "",
     title: "",
     image: "",
     content: "",
     category: "",
     published: false,
   });
-  const [idCounter, setIdCounter] = useState(1);
 
+  // Carica articoli
   useEffect(() => {
     fetch("http://localhost:3000/posts")
       .then((response) => response.json())
       .then((data) => {
-        console.log("Dati API:", data);
+        console.log("Dati API:", data.posts);
         setArticles(data.posts);
-        if (data.length > 0) {
-          const maxId = Math.max(...data.map((article) => article.id));
-          setIdCounter(maxId + 1);
-        }
       })
       .catch((error) => {
         console.error("Errore nel recupero degli articoli:", error);
       });
   }, []);
 
+  // Modifiche form
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -38,31 +34,53 @@ const App = () => {
     });
   };
 
+  // Aggiungi nuovo articolo - POST
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const newArticle = {
-      id: idCounter,
       title: formData.title,
       image: formData.image,
       content: formData.content,
-      category: formData.category,
-      published: formData.published,
+      category: [formData.category],
     };
 
-    setArticles([...articles, newArticle]);
-    setFormData({
-      title: "",
-      image: "",
-      content: "",
-      category: "",
-      published: false,
-    });
-    setIdCounter(idCounter + 1);
+    fetch("http://localhost:3000/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newArticle),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Articolo creato:", data.post);
+        setArticles([...articles, data.post]);
+        setFormData({
+          title: "",
+          image: "",
+          content: "",
+          category: "",
+          published: false,
+        });
+      })
+      .catch((error) => {
+        console.error("Errore durante la creazione:", error);
+      });
   };
 
-  const deleteArticle = (id) => {
-    setArticles(articles.filter((article) => article.id !== id));
+  // Elimina un articolo - DELETE
+  const deleteArticle = (index) => {
+    fetch(`http://localhost:3000/posts/${index}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (response.ok) {
+          setArticles(articles.filter((_, idx) => idx !== index));
+        } else {
+          console.error("Errore durante l'eliminazione.");
+        }
+      })
+      .catch((error) => {
+        console.error("Errore durante l'eliminazione:", error);
+      });
   };
 
   return (
@@ -113,18 +131,6 @@ const App = () => {
             required
           />
         </div>
-        <div className="mb-3">
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              name="published"
-              checked={formData.published}
-              onChange={handleChange}
-            />
-            <label className="form-check-label">Pubblicato</label>
-          </div>
-        </div>
         <button type="submit" className="btn btn-primary">
           Aggiungi Articolo
         </button>
@@ -132,16 +138,16 @@ const App = () => {
 
       {articles.length > 0 ? (
         <ul className="list-group">
-          {articles.map((article) => (
+          {articles.map((article, index) => (
             <li
-              key={article.id}
+              key={index}
               className="list-group-item d-flex flex-column align-items-start"
             >
               <div className="d-flex w-100 justify-content-between">
                 <h5>{article.title}</h5>
                 <button
                   className="btn btn-danger btn-sm"
-                  onClick={() => deleteArticle(article.id)}
+                  onClick={() => deleteArticle(index)}
                 >
                   <FaTrash />
                 </button>
@@ -164,13 +170,6 @@ const App = () => {
               <p className="mt-3">{article.content}</p>
               <span className="badge bg-secondary">
                 Categoria: {article.category}
-              </span>
-              <span
-                className={`badge ${
-                  article.published ? "bg-success" : "bg-warning"
-                } mt-2`}
-              >
-                {article.published ? "Pubblicato" : "Bozza"}
               </span>
             </li>
           ))}
