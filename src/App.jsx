@@ -21,7 +21,7 @@ const App = () => {
         setArticles(data.posts);
       })
       .catch((error) => {
-        console.error("Errore nel recupero degli articoli:", error);
+        console.error("Errore nel recupero degli articoli", error);
       });
   }, []);
 
@@ -62,7 +62,7 @@ const App = () => {
         });
       })
       .catch((error) => {
-        console.error("Errore durante la creazione:", error);
+        console.error("Errore durante la creazione", error);
       });
   };
 
@@ -75,11 +75,11 @@ const App = () => {
         if (response.ok) {
           setArticles(articles.filter((_, index) => index !== index));
         } else {
-          console.error("Errore durante l'eliminazione.");
+          console.error("Errore durante l'eliminazione");
         }
       })
       .catch((error) => {
-        console.error("Errore durante l'eliminazione:", error);
+        console.error("Errore durante l'eliminazione", error);
       });
   };
 
